@@ -12,11 +12,12 @@ const serviceAdapter = new ExperimentalEmptyAdapter();
 
 // 2. Create the CopilotRuntime instance and utilize the ADK AG-UI
 //    integration to setup the connection.
+const chatAgentUrl = process.env.CHAT_AGENT_URL || "http://localhost:8000/api/chat";
 const runtime = new CopilotRuntime({
   agents: {
     // Our AG-UI endpoint URL
-    "chat_agent": new HttpAgent({ url: "http://localhost:8000/api/chat" }),
-  }
+    "chat_agent": new HttpAgent({ url: chatAgentUrl }),
+  },
 });
 
 // 3. Build a Next.js API route that handles the CopilotKit runtime requests.

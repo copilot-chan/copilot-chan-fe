@@ -1,15 +1,5 @@
-import "@copilotkit/react-ui/styles.css";
-import { CopilotChat } from "@copilotkit/react-ui";
+import { redirect } from "next/navigation";
 
-export default function Home() {
-  return (
-    <main>
-        <CopilotChat
-            labels={{
-                title: "Popup Assistant",
-                initial: "Hi! I'm connected to an agent. How can I help?",
-            }}
-        />
-    </main>
-  );
+export default function Page() {
+  redirect("/home");
 }
