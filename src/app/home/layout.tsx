@@ -5,7 +5,7 @@ import { CopilotKit } from "@copilotkit/react-core";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
-import "@/app/globals.css"
+import "@/app/globals.css";
 
 export default function HomeLayout({
   children,
@@ -25,13 +25,9 @@ export default function HomeLayout({
   return (
     <CopilotKit
       runtimeUrl="/api/copilotkit"
-      properties={
-        { authorization: `Bearer ${token}` }
-      }
+      properties={{ authorization: `Bearer ${token}` }}
       agent="chat_agent"
-      showDevConsole={
-        (process.env.IS_DEV || "fasle").toLowerCase() === "true"
-      }
+      showDevConsole={(process.env.IS_DEV || "fasle").toLowerCase() === "true"}
     >
       {children}
     </CopilotKit>
