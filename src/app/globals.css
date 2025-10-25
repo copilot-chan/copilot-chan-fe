@@ -315,3 +315,16 @@
     @apply bg-background text-foreground;
   }
 }
+
+.copilotKitChat{
+  @apply items-center
+}
+
+.copilotKitMessages{
+  @apply mx-auto max-w-[760px] w-full
+}
+
+
+.copilotKitInput {
+  @apply max-w-[760px];
+}
