@@ -2,11 +2,11 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
-import { onIdTokenChanged, signOut as firebaseSignOut } from "firebase/auth";
+import { onIdTokenChanged, signOut as firebaseSignOut,User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
 type AuthContextType = {
-  user: any | null;
+  user: User | null;
   token: string | null;
   loading: boolean;
   signOut: () => Promise<void>;
@@ -20,7 +20,7 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<any | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

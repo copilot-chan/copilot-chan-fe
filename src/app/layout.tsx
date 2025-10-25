@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/components/auth-provider";
+import { Toaster } from "sonner";
 import Script from "next/script";
 
 import "./globals.css";
@@ -53,14 +54,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html className={`${geist.variable} ${geistMono.variable}`} lang="en">
+    <html className={`${geist.variable} ${geistMono.variable}`} lang="en" suppressHydrationWarning>
       <head>
-        <script
-          // biome-ignore lint/security/noDangerouslySetInnerHtml: "Required"
-          dangerouslySetInnerHTML={{
-            __html: THEME_COLOR_SCRIPT,
-          }}
-        />
+        <Script id="theme-color" strategy="afterInteractive">
+          {THEME_COLOR_SCRIPT}
+        </Script>
       </head>
       <body className="antialiased">
         <ThemeProvider
@@ -69,6 +67,7 @@ export default function RootLayout({
           disableTransitionOnChange
           enableSystem
         >
+          <Toaster position="top-center" />
           <AuthProvider>
             {children}
           </AuthProvider>

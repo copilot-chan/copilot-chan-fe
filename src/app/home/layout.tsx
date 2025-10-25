@@ -1,32 +1,23 @@
-"use client";
-
-import { useEffect } from "react";
-import { CopilotKit } from "@copilotkit/react-core";
-import { useRouter } from "next/navigation";
+import { cookies } from "next/headers";
 import "@/app/globals.css";
-import { useAuth } from "@/components/auth-provider";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
+import { SidebarInset } from "@/components/ui/sidebar";
+import HomeClientWrapper from "./home-client-wrapper";
 
-export default function HomeLayout({
+export default async function HomeLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
-  const {token, loading,user} = useAuth();
-  const router=useRouter();
-  
-  useEffect(() => {
-    if (!loading && !user) router.push("/login");
-  }, [user, loading, router]);
-
-  if (loading || !token) return <div>Loading...</div>;
-
-
+}: {
+  children: React.ReactNode;
+}) {
+  const cookieStore = await cookies();
+  const isCollapsed = cookieStore.get("sidebar_state")?.value !== "true";
   return (
-    <CopilotKit
-      runtimeUrl="/api/copilotkit"
-      properties={{ authorization: `Bearer ${token}` }}
-      agent="chat_agent"
-      showDevConsole={(process.env.IS_DEV || "false").toLowerCase() === "true"}
-    >
-      {children}
-    </CopilotKit>
+    <SidebarProvider defaultOpen={!isCollapsed}>
+      <AppSidebar />
+      <SidebarInset>
+        <HomeClientWrapper>{children}</HomeClientWrapper>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
