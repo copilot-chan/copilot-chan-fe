@@ -4,10 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-import { useSWRConfig } from "swr";
-import { unstable_serialize } from "swr/infinite";
 import { PlusIcon, TrashIcon } from "@/components/icons";
-import { SidebarHistory, getChatHistoryPaginationKey } from "@/components/sidebar-history";
+import { SidebarHistory } from "@/components/sidebar-history";
 import { SidebarUserNav } from "@/components/sidebar-user-nav";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "./auth-provider";
@@ -34,25 +32,13 @@ import {
 export function AppSidebar() {
   const router = useRouter();
   const { setOpenMobile } = useSidebar();
-  const { mutate } = useSWRConfig();
   const [showDeleteAllDialog, setShowDeleteAllDialog] = useState(false);
   const {user,loading}=useAuth()
 
   const handleDeleteAll = () => {
-    const deletePromise = fetch("/api/history", {
-      method: "DELETE",
-    });
-
-    toast.promise(deletePromise, {
-      loading: "Deleting all chats...",
-      success: () => {
-        mutate(unstable_serialize(getChatHistoryPaginationKey));
-        router.push("/");
-        setShowDeleteAllDialog(false);
-        return "All chats deleted successfully";
-      },
-      error: "Failed to delete all chats",
-    });
+    // TODO: Implement delete all sessions via backend API
+    toast.error("Delete all feature coming soon");
+    setShowDeleteAllDialog(false);
   };
 
   return (

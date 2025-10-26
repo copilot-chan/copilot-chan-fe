@@ -7,6 +7,7 @@ import { auth } from "@/lib/firebase";
 
 type AuthContextType = {
   user: User | null;
+  uid: string | null;
   token: string | null;
   loading: boolean;
   signOut: () => Promise<void>;
@@ -14,6 +15,7 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
+  uid:null,
   token: null,
   loading: true,
   signOut: async () => {},
@@ -64,7 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, signOut }}>
+    <AuthContext.Provider value={{ user,uid:user?.uid??null, token, loading, signOut }}>
       {children}
     </AuthContext.Provider>
   );

@@ -2,9 +2,6 @@ import Link from "next/link";
 import { memo } from "react";
 import type { Chat } from "@/lib/types";
 import {
-  CheckCircleFillIcon,
-  GlobeIcon,
-  LockIcon,
   MoreHorizontalIcon,
   ShareIcon,
   TrashIcon,
@@ -13,9 +10,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuPortal,
   DropdownMenuSub,
-  DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
@@ -25,23 +20,24 @@ import {
   SidebarMenuItem,
 } from "./ui/sidebar";
 
+interface ChatItemProps {
+  chat: Chat;
+  isActive: boolean;
+  onDelete: (chatId: string) => void;
+  setOpenMobile: (open: boolean) => void;
+}
+
 const PureChatItem = ({
   chat,
   isActive,
   onDelete,
   setOpenMobile,
-}: {
-  chat: Chat;
-  isActive: boolean;
-  onDelete: (chatId: string) => void;
-  setOpenMobile: (open: boolean) => void;
-}) => {
-
+}: ChatItemProps) => {
   return (
     <SidebarMenuItem>
       <SidebarMenuButton asChild isActive={isActive}>
         <Link href={`/chat/${chat.id}`} onClick={() => setOpenMobile(false)}>
-          <span>{chat.title}</span>
+          <span>{chat.title || "New Chat"}</span>
         </Link>
       </SidebarMenuButton>
 

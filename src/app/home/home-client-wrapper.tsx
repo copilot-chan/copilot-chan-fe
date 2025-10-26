@@ -25,7 +25,7 @@ export default function HomeClientWrapper({
       properties={{ authorization: `Bearer ${token}` }}
       agent="chat_agent"
       showDevConsole={(process.env.IS_DEV || "true").toLowerCase() === "true"}
-      publicLicenseKey="ck_pub_f17c56c16aa8cc2542dd0dc6d68fdc35"
+      publicLicenseKey={process.env.NEXT_PUBLIC_COPILOKIT_LICENSE_KEY || "NEXT_PUBLIC_COPILOKIT_LICENSE_KEY"}
     >
       {children}
     </CopilotKit>
