@@ -12,7 +12,7 @@ const serviceAdapter = new ExperimentalEmptyAdapter();
 
 // 2. Create the CopilotRuntime instance and utilize the ADK AG-UI
 //    integration to setup the connection.
-const chatAgentUrl = process.env.CHAT_AGENT_URL || "http://localhost:8000/api/chat";
+const chatAgentUrl = process.env.CHAT_AGENT_URL || "http://localhost:8000/ag-ui/chat";
 const runtime = new CopilotRuntime({
   agents: {
     // Our AG-UI endpoint URL
