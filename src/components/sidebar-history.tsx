@@ -91,6 +91,13 @@ export function SidebarHistory() {
 
   const { listSessions, deleteSession, loading } = useSessions();
   
+  // Debug: Log auth state
+  console.log("[Sidebar] Component mounted/updated", { 
+    hasUser: !!user, 
+    uid, 
+    loading 
+  });
+  
   const [chats, setChats] = useState<Chat[]>([]);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -103,7 +110,7 @@ export function SidebarHistory() {
 
     console.log("[Sidebar] Loading sessions for uid:", uid);
     try {
-      const sessions = await listSessions("chat-agent", uid);
+      const sessions = await listSessions("copilot-chan", uid);
       console.log("[Sidebar] Loaded sessions:", sessions.length);
       
       // Chuyển đổi sessions sang chat format
@@ -130,7 +137,7 @@ export function SidebarHistory() {
     if (!deleteId || !uid) return;
 
     try {
-      await deleteSession("chat-agent", uid, deleteId);
+      await deleteSession("copilot-chan", uid, deleteId);
       
       // Remove from local state
       setChats((prev) => prev.filter((chat) => chat.id !== deleteId));

@@ -13,6 +13,7 @@
     "@copilotkit/react-core": "^1.10.6",
     "@copilotkit/react-ui": "^1.10.6",
     "@copilotkit/runtime": "^1.10.6",
+    "@heroicons/react": "^2.2.0",
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/themes": "^3.2.1",
     "@tailwindcss/postcss": "^4.1.15",
@@ -35,7 +36,8 @@
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.15",
     "tailwindcss-animate": "^1.0.7",
-    "usehooks-ts": "^3.1.1"
+    "usehooks-ts": "^3.1.1",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

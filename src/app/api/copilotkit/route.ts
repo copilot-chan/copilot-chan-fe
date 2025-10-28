@@ -15,10 +15,8 @@ const serviceAdapter = new ExperimentalEmptyAdapter();
 const chatAgentUrl =
   process.env.CHAT_AGENT_URL || "http://localhost:8000/ag-ui/api/chat";
 
-
 const runtime = new CopilotRuntime({
   agents: {
-    // Our AG-UI endpoint URL
     chat_agent: new HttpAgent({ url: chatAgentUrl }),
   },
 });

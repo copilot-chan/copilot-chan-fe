@@ -4,8 +4,11 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/components/auth-provider";
 import { Toaster } from "sonner";
 import Script from "next/script";
+import { cookies } from "next/headers";
 
 import "./globals.css";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
 
 export const metadata: Metadata = {
   title: "Copilot-chan",
@@ -48,13 +51,20 @@ const THEME_COLOR_SCRIPT = `\
   updateThemeColor();
 })();`;
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+    const cookieStore = await cookies();
+    const isCollapsed = cookieStore.get("sidebar_state")?.value !== "true";
   return (
-    <html className={`${geist.variable} ${geistMono.variable}`} lang="en" suppressHydrationWarning>
+    <html
+      className={`${geist.variable} ${geistMono.variable}`}
+      lang="en"
+      suppressHydrationWarning
+    >
       <head>
         <Script id="theme-color" strategy="afterInteractive">
           {THEME_COLOR_SCRIPT}
@@ -69,7 +79,10 @@ export default function RootLayout({
         >
           <Toaster position="top-center" />
           <AuthProvider>
-            {children}
+            <SidebarProvider defaultOpen={!isCollapsed}>
+              <AppSidebar />
+              <SidebarInset>{children}</SidebarInset>
+            </SidebarProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>

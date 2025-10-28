@@ -63,7 +63,8 @@ export function useSessions() {
         });
 
         if (!response.ok) {
-          const errorData = await response.json();
+            const errorData = await response.json().catch(() => ({}));
+  console.error("Fetch failed with status:", response.status, errorData);
           throw new Error(errorData.message || "Failed to fetch session");
         }
 
