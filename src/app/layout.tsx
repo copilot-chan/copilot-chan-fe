@@ -9,6 +9,8 @@ import { cookies } from "next/headers";
 import "./globals.css";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+import { SettingsProvier } from "@/components/settings/settings-provider";
+import { Settings } from "@/components/settings";
 
 export const metadata: Metadata = {
   title: "Copilot-chan",
@@ -56,9 +58,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
-    const cookieStore = await cookies();
-    const isCollapsed = cookieStore.get("sidebar_state")?.value !== "true";
+  const cookieStore = await cookies();
+  const isCollapsed = cookieStore.get("sidebar_state")?.value !== "true";
   return (
     <html
       className={`${geist.variable} ${geistMono.variable}`}
@@ -80,8 +81,11 @@ export default async function RootLayout({
           <Toaster position="top-center" />
           <AuthProvider>
             <SidebarProvider defaultOpen={!isCollapsed}>
-              <AppSidebar />
-              <SidebarInset>{children}</SidebarInset>
+              <SettingsProvier>
+                <AppSidebar/>
+                <Settings/>
+                <SidebarInset>{children}</SidebarInset>
+              </SettingsProvier>
             </SidebarProvider>
           </AuthProvider>
         </ThemeProvider>

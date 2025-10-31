@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { memo } from "react";
+import { memo, useState } from "react";
 import { useWindowSize } from "usehooks-ts";
 import { SidebarToggle } from "@/components/sidebar-toggle";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "./icons";
 import { useSidebar } from "./ui/sidebar";
+import { SettingsToggle } from "./settings-toggle";
 
 function PureChatHeader({
   chatId,
@@ -18,10 +19,10 @@ function PureChatHeader({
   const { open } = useSidebar();
 
   const { width: windowWidth } = useWindowSize();
-
   return (
     <header className="sticky top-0 flex items-center gap-2 bg-background px-2 py-1.5 md:px-2">
       <SidebarToggle />
+      <SettingsToggle/>
 
       {(!open || windowWidth < 768) && (
         <Button
@@ -49,6 +50,8 @@ function PureChatHeader({
           nạp vip pro
         </Link>
       </Button>
+
+
     </header>
   );
 }

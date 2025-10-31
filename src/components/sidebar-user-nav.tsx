@@ -4,7 +4,7 @@ import { ChevronUp } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { User } from "firebase/auth";
-import { useAuth } from "@/components/auth-provider"; 
+import { useAuth } from "@/components/auth-provider";
 import { useTheme } from "next-themes";
 import {
   DropdownMenu,
@@ -24,8 +24,7 @@ import { toast } from "./toast";
 export function SidebarUserNav() {
   const router = useRouter();
   const { setTheme, resolvedTheme } = useTheme();
-  
-    const { user, loading, signOut } = useAuth(); 
+  const { user, loading, signOut } = useAuth();
   if (loading) {
     return (
       <SidebarMenu>
@@ -46,9 +45,10 @@ export function SidebarUserNav() {
     );
   }
 
-   const isGuest = !user;
+  const isGuest = !user;
 
   return (
+    <>
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
@@ -129,5 +129,6 @@ export function SidebarUserNav() {
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
+    </>
   );
 }
