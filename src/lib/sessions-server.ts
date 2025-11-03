@@ -1,5 +1,6 @@
 // lib/sessions-server.ts
 import type { Session } from "@/lib/types";
+import { getTokenFromCookie } from "./auth-server";
 
 type ChatMessage = {
   id: string;
@@ -11,8 +12,15 @@ export async function fetchSessionMessages(
   sessionId: string,
   appName: string,
   userId: string,
-  token?: string
+  token: string | null 
 ): Promise<ChatMessage[]> {
+  console.log("fetchSessionMessages token:", token);
+
+if (!token) {
+  token = await getTokenFromCookie();
+}
+
+console.log("after fetch from cookies",token)
   const BACKEND_URL =
     process.env.NEXT_PUBLIC_BACKEND_URL || "http://127.0.0.1:8000";
 

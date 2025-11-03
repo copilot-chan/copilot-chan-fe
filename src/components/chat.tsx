@@ -39,7 +39,6 @@ export function Chat({ initialMessages, threadId, isFirst }: ChatProps) {
         onSubmitMessage={async (msg) => {
           if (needredirect.current) {
             window.history.replaceState({}, "", `/chat/${threadId}`);
-            alert("Hello! Đây là thông báo đơn giản nhất 😄");
             needredirect.current = false;
           }
         }}

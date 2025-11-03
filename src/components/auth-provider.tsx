@@ -4,12 +4,14 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
 import { onIdTokenChanged, signOut as firebaseSignOut,User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
 
 type AuthContextType = {
   user: User | null;
   uid: string | null;
   token: string | null;
   loading: boolean;
+  error:string|null;
   signOut: () => Promise<void>;
 };
 
@@ -18,6 +20,7 @@ export const AuthContext = createContext<AuthContextType>({
   uid:null,
   token: null,
   loading: true,
+  error:null,
   signOut: async () => {},
 });
 
@@ -26,6 +29,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     // onIdTokenChanged fires when user signs in/out and when token is refreshed
@@ -60,13 +64,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await firebaseSignOut(auth);
       setUser(null);
       setToken(null);
+       router.push("/login");
     } catch (err) {
       console.error("Sign out failed", err);
     }
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user,uid:user?.uid??null, token, loading, signOut }}>
+    <AuthContext.Provider value={{ user,uid:user?.uid??null, token, loading,error, signOut }}>
       {children}
     </AuthContext.Provider>
   );

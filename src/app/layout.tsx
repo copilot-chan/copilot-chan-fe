@@ -82,9 +82,7 @@ export default async function RootLayout({
           <AuthProvider>
             <SidebarProvider defaultOpen={!isCollapsed}>
               <SettingsProvier>
-                <AppSidebar/>
-                <Settings/>
-                <SidebarInset>{children}</SidebarInset>
+{children}
               </SettingsProvier>
             </SidebarProvider>
           </AuthProvider>
