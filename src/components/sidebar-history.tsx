@@ -25,6 +25,7 @@ import { LoaderIcon } from "./icons";
 import { ChatItem } from "./sidebar-history-item";
 import { useAuth } from "./auth-provider";
 import { useSessions } from "@/hooks/use-sessions";
+import { useSessionHistory } from "./sessions-history-provider";
 
 type GroupedChats = {
   today: Chat[];
@@ -70,34 +71,30 @@ const groupChatsByDate = (chats: Chat[]): GroupedChats => {
 /**
  * Chuyển đổi Session sang Chat format để hiển thị trong sidebar
  */
-const sessionToChat = (session: Session): Chat => {
-  // Lấy message đầu tiên làm title
-  const firstMessage = session.events?.[0];
-  const title = firstMessage?.content?.text?.slice(0, 50) || "New Chat";
-
-  return {
-    id: session.id,
-    title,
-    createdAt: session.lastUpdateTime || Date.now(),
-    userId: session.userId,
-  };
-};
+const sessionToChat = ({ id, userId, state, createTime }: Session): Chat => ({
+  id,
+  title: state?.title ?? "New Chat",
+  createdAt: createTime ?? Date.now(),
+  userId,
+});
 
 export function SidebarHistory() {
   const { user, uid } = useAuth();
   const { setOpenMobile } = useSidebar();
-  const { id } = useParams();
   const router = useRouter();
-
+  
+  const { version, idChatActive } = useSessionHistory();
+  const id = idChatActive;
+  console.log("[sidebar-history]", id);
   const { listSessions, deleteSession, loading } = useSessions();
-  
+
   // Debug: Log auth state
-  console.log("[Sidebar] Component mounted/updated", { 
-    hasUser: !!user, 
-    uid, 
-    loading 
+  console.log("[Sidebar] Component mounted/updated", {
+    hasUser: !!user,
+    uid,
+    loading,
   });
-  
+
   const [chats, setChats] = useState<Chat[]>([]);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -112,13 +109,13 @@ export function SidebarHistory() {
     try {
       const sessions = await listSessions("copilot-chan", uid);
       console.log("[Sidebar] Loaded sessions:", sessions.length);
-      
+
       // Chuyển đổi sessions sang chat format
       const chatList = sessions.map(sessionToChat);
       // Sort theo thời gian mới nhất
       chatList.sort((a, b) => b.createdAt - a.createdAt);
       setChats(chatList);
-      
+
       console.log("[Sidebar] Chats set:", chatList.length);
     } catch (error) {
       console.error("[Sidebar] Failed to load sessions:", error);
@@ -131,17 +128,18 @@ export function SidebarHistory() {
     if (uid) {
       loadSessions();
     }
-  }, [uid, loadSessions]);
+    console.log("[ahihi] dda render lai",chats)
+  }, [uid, loadSessions, version, id]);
 
   const handleDelete = async () => {
     if (!deleteId || !uid) return;
 
     try {
       await deleteSession("copilot-chan", uid, deleteId);
-      
+
       // Remove from local state
       setChats((prev) => prev.filter((chat) => chat.id !== deleteId));
-      
+
       toast.success("Chat deleted successfully");
       setShowDeleteDialog(false);
 
@@ -155,7 +153,16 @@ export function SidebarHistory() {
   };
 
   // Debug logging
-  console.log("[Sidebar] Render - user:", !!user, "uid:", uid, "loading:", loading, "chats:", chats.length);
+  console.log(
+    "[Sidebar] Render - user:",
+    !!user,
+    "uid:",
+    uid,
+    "loading:",
+    loading,
+    "chats:",
+    chats.length
+  );
 
   if (!user) {
     return (

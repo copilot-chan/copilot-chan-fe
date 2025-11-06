@@ -1,11 +1,7 @@
 import Link from "next/link";
 import { memo } from "react";
 import type { Chat } from "@/lib/types";
-import {
-  MoreHorizontalIcon,
-  ShareIcon,
-  TrashIcon,
-} from "./icons";
+import { MoreHorizontalIcon, ShareIcon, TrashIcon } from "./icons";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +15,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "./ui/sidebar";
+import { useCoAgent } from "@copilotkit/react-core";
 
 interface ChatItemProps {
   chat: Chat;
@@ -33,11 +30,20 @@ const PureChatItem = ({
   onDelete,
   setOpenMobile,
 }: ChatItemProps) => {
+  const { state } = useCoAgent<{ title?: string }>({
+    name: "chat_agent",
+   
+  });
+
+  const displayTitle = isActive
+    ? state.title || chat.title || "New Chat"
+    : chat.title || "New Chat";
+
   return (
     <SidebarMenuItem>
       <SidebarMenuButton asChild isActive={isActive}>
         <Link href={`/chat/${chat.id}`} onClick={() => setOpenMobile(false)}>
-          <span>{chat.title || "New Chat"}</span>
+                    <span>{displayTitle}</span>
         </Link>
       </SidebarMenuButton>
 
@@ -73,9 +79,12 @@ const PureChatItem = ({
   );
 };
 
-export const ChatItem = memo(PureChatItem, (prevProps, nextProps) => {
-  if (prevProps.isActive !== nextProps.isActive) {
-    return false;
-  }
-  return true;
-});
+export const ChatItem = memo(PureChatItem);
+
+
+// export const ChatItem = memo(PureChatItem, (prevProps, nextProps) => {
+//   if (prevProps.isActive !== nextProps.isActive) {
+//     return false;
+//   }
+//   return true;
+// });
