@@ -28,12 +28,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "./ui/alert-dialog";
+import { useCopilotKitConfig } from "./copilotkit-provider";
 
 export function AppSidebar() {
   const router = useRouter();
   const { setOpenMobile } = useSidebar();
   const [showDeleteAllDialog, setShowDeleteAllDialog] = useState(false);
   const {user,loading}=useAuth()
+  const {reset}=useCopilotKitConfig()
 
   const handleDeleteAll = () => {
     // TODO: Implement delete all sessions via backend API
@@ -55,11 +57,11 @@ export function AppSidebar() {
                 }}
               >
                 <span className="cursor-pointer rounded-md px-2 font-semibold text-lg hover:bg-muted">
-                  Chatbot
+                  Copilot-chan
                 </span>
               </Link>
               <div className="flex flex-row gap-1">
-                {user && (
+                {/* {user && (
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
@@ -75,7 +77,7 @@ export function AppSidebar() {
                       Delete All Chats
                     </TooltipContent>
                   </Tooltip>
-                )}
+                )} */}
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
@@ -84,6 +86,8 @@ export function AppSidebar() {
                         setOpenMobile(false);
                         router.push("/");
                         router.refresh();
+                        reset()
+                        
                       }}
                       type="button"
                       variant="ghost"
