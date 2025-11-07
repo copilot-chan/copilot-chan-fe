@@ -51,7 +51,6 @@ export function CustomMessages({
 }: CustomMessagesProps) {
 
   const allMessages = [...initialMessages, ...messages];
-  console.log("[aaaaaaaaaaaa]",inProgress)
   return (
     <div className="flex flex-col gap-2 copilotKitMessages h-full overflow-y-auto">
       {allMessages.map((message, index) => {
