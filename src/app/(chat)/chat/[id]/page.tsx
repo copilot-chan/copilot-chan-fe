@@ -2,7 +2,7 @@ import { fetchSessionMessages } from "@/lib/sessions-server";
 import { getUidFromCookie, getTokenFromCookie } from "@/lib/auth-server";
 import { notFound } from "next/navigation";
 import { CopilotKit } from "@copilotkit/react-core";
-import { MyApp } from "@/components/my-app";
+import { ChatPageClient } from "./chat-page-client";
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -11,13 +11,11 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     getUidFromCookie(),
     getTokenFromCookie(),
   ]);
-  console.log("userId", userId)
+  console.log("userId", userId,token)
 
   if (!userId || !token) {
     notFound();
   }
-  
-
 
   const sessionMessages = await fetchSessionMessages(
     id,
@@ -25,13 +23,14 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     userId,
     token
   );
-  console.log(sessionMessages);
+  console.log("[chat/[id]]",sessionMessages);
   return (
-    <MyApp
-      token={token}
+    <>
+
+    <ChatPageClient
       threadId={id}
       initialMessages={sessionMessages}
-      isFirst={false}
-    ></MyApp>
+      />
+    </>
   );
 }

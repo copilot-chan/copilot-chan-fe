@@ -20,30 +20,45 @@ import { ChatHeader } from "@/components/chat-header";
 import { X, Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Loader } from "@/components/ui/loader";
-import { ThinkingMessage } from "@/components/message";
-import { MyApp } from "@/components/my-app";
+import { ThinkingMessage } from "@/components/messages";
 import { useAuth } from "@/components/auth-provider";
 import { useRouter } from "next/navigation";
-import {generateTimeUID}from "@/lib/utils"
-
+import { generateTimeUID } from "@/lib/utils";
+import { Chat } from "@/components/chat";
+import { useCopilotKitConfig } from "@/components/copilotkit-provider";
+import { useAppState } from "@/components/app-state-provider";
+import { CopilotActionRender } from "@/components/copilot-actions";
 
 export default function HomePage() {
   const { token, loading, user } = useAuth();
   const router = useRouter();
-  const id = generateTimeUID();
+  const { configure, config } = useCopilotKitConfig();
+  const { setIsFirst } = useAppState();
+  const [threadId, setThreadId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!loading && !user) router.push("/login");
-  }, [loading, user, router]);
+    if (!loading && !user) {
+      router.push("/login");
+      return;
+    }
 
-  if (loading || !token) return <div>Loading...</div>;
+    if (token && !config) {
+      const newThreadId = generateTimeUID();
+      setThreadId(newThreadId);
+      configure({ token, threadId: newThreadId });
+    }
+
+    setIsFirst(true);
+  }, [loading, user, router, token, configure, config]);
+
+  if (loading || !token || !config) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <MyApp
-      token={token}
-      initialMessages={[]}
-      threadId={id}
-      isFirst={true}
-    ></MyApp>
+    <>
+      <CopilotActionRender />
+      <Chat initialMessages={[]} />
+    </>
   );
 }

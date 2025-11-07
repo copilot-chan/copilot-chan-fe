@@ -317,13 +317,16 @@
 }
 
 .copilotKitChat{
-  @apply items-center
+  @apply items-center w-full
 }
 
-.copilotKitMessages{
-  @apply  max-w-[760px] w-full
+.copilotKitMessages {
+  @apply w-full p-100; 
 }
 
+/* .copilotkitMessage {
+  @apply max-w-[760px] my-2 p-24 rounded-xl bg-gray-100;
+} */
 
 .copilotKitInput {
   @apply max-w-[760px];

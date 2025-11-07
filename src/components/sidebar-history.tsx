@@ -88,13 +88,6 @@ export function SidebarHistory() {
   console.log("[sidebar-history]", id);
   const { listSessions, deleteSession, loading } = useSessions();
 
-  // Debug: Log auth state
-  console.log("[Sidebar] Component mounted/updated", {
-    hasUser: !!user,
-    uid,
-    loading,
-  });
-
   const [chats, setChats] = useState<Chat[]>([]);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -125,7 +118,7 @@ export function SidebarHistory() {
 
   // Load sessions khi component mount hoặc khi uid thay đổi
   useEffect(() => {
-    if (uid) {
+    if (uid&&!loading) {
       loadSessions();
     }
     console.log("[ahihi] dda render lai",chats)
