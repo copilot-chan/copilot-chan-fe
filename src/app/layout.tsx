@@ -11,6 +11,9 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SettingsProvier } from "@/components/settings/settings-provider";
 import { Settings } from "@/components/settings";
+import { SessionHistoryProvider } from "@/components/sessions-history-provider";
+import { CopilotKitProvider } from "@/components/copilotkit-provider";
+import { AppStateProvider } from "@/components/app-state-provider";
 
 export const metadata: Metadata = {
   title: "Copilot-chan",
@@ -80,11 +83,9 @@ export default async function RootLayout({
         >
           <Toaster position="top-center" />
           <AuthProvider>
-            <SidebarProvider defaultOpen={!isCollapsed}>
-              <SettingsProvier>
-{children}
-              </SettingsProvier>
-            </SidebarProvider>
+            <CopilotKitProvider>
+              <AppStateProvider>{children}</AppStateProvider>
+            </CopilotKitProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>
