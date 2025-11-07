@@ -1,5 +1,5 @@
 "use client";
-import { ThinkingMessage } from "@/components/message";
+import { ThinkingMessage } from "@/components/messages";
 import { CatchAllActionRenderProps, useCopilotAction } from "@copilotkit/react-core";
 import React from "react";
 import MCPToolCall from "./mcp-tool-call";

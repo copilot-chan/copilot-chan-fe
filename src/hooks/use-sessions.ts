@@ -1,6 +1,11 @@
 import { useState, useCallback } from "react";
 import { useAuth } from "@/components/auth-provider";
-import type { Session, ListSessionsResponse, ListAppsResponse } from "@/lib/types";
+import type {
+  Session,
+  ListSessionsResponse,
+  ListAppsResponse,
+  ChatMessage,
+} from "@/lib/types";
 
 /**
  * Hook để quản lý sessions
@@ -26,7 +31,6 @@ export function useSessions() {
             ...(token && { Authorization: `Bearer ${token}` }),
           },
         });
-
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.message || "Failed to fetch sessions");
@@ -49,7 +53,11 @@ export function useSessions() {
    * Lấy một session cụ thể
    */
   const getSession = useCallback(
-    async (appName: string, userId: string, sessionId: string): Promise<Session> => {
+    async (
+      appName: string,
+      userId: string,
+      sessionId: string
+    ): Promise<ChatMessage[]> => {
       setLoading(true);
       setError(null);
 
@@ -63,13 +71,43 @@ export function useSessions() {
         });
 
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-  console.error("Fetch failed with status:", response.status, errorData);
+          const errorData = await response.json().catch(() => ({}));
+          console.error(
+            "Fetch failed with status:",
+            response.status,
+            errorData
+          );
           throw new Error(errorData.message || "Failed to fetch session");
         }
 
         const session: Session = await response.json();
-        return session;
+
+        // Convert session events → ChatMessage[]
+        const messages =
+          session?.events
+            ?.filter(
+              (event) =>
+                event.content &&
+                Array.isArray(event.content.parts) &&
+                event.content.parts.length > 0
+            )
+            .map((event, index) => {
+              const textParts = event.content.parts
+                .map((p: any) => p.text)
+                .filter(Boolean)
+                .join(" ");
+
+              const role =
+                event.author === "copilot_chat" ? "assistant" : event.author;
+
+              return {
+                id: String(index + 1),
+                role: role as "user" | "assistant",
+                content: textParts,
+              };
+            }) ?? [];
+
+        return messages;
       } catch (err) {
         const message = err instanceof Error ? err.message : "Unknown error";
         setError(message);
@@ -116,7 +154,11 @@ export function useSessions() {
    * Xóa một session
    */
   const deleteSession = useCallback(
-    async (appName: string, userId: string, sessionId: string): Promise<void> => {
+    async (
+      appName: string,
+      userId: string,
+      sessionId: string
+    ): Promise<void> => {
       setLoading(true);
       setError(null);
 
@@ -154,4 +196,3 @@ export function useSessions() {
     error,
   };
 }
-

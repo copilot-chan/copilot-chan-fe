@@ -1,12 +1,7 @@
 // lib/sessions-server.ts
 import type { Session } from "@/lib/types";
 import { getTokenFromCookie } from "./auth-server";
-
-type ChatMessage = {
-  id: string;
-  role: string;
-  content: string;
-};
+import { ChatMessage } from "@/lib/types";
 
 export async function fetchSessionMessages(
   sessionId: string,
@@ -14,6 +9,7 @@ export async function fetchSessionMessages(
   userId: string,
   token: string | null 
 ): Promise<ChatMessage[]> {
+  console.log("userID",userId)
   console.log("fetchSessionMessages token:", token);
 
 if (!token) {

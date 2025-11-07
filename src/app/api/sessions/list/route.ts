@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
     }
 
     const sessions: Session[] = await response.json();
-
+    
     return NextResponse.json({ sessions }, { status: 200 });
   } catch (error) {
     console.error("Error fetching sessions:", error);

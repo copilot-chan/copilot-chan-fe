@@ -19,6 +19,10 @@ export interface Message {
   timestamp?: number; // Unix timestamp (ms)
   errorMessage?: string; // Nếu có lỗi
 }
+interface SessionState {
+  title?: string;
+  [key: string]: any;
+}
 
 /**
  * Session - Một cuộc trò chuyện (conversation)
@@ -33,7 +37,9 @@ export interface Session {
   appName: string; // Tên app (vd: "chat-agent")
   userId: string; // ID của user
   events?: Message[]; // Danh sách messages trong conversation
-  lastUpdateTime?: number; // Thời gian update cuối (để sort)
+  state: SessionState;
+  createTime: number;
+  updateTime: number;
 }
 
 /**
@@ -41,10 +47,15 @@ export interface Session {
  */
 export interface Chat {
   id: string;
-  title?: string; // Title từ message đầu tiên
-  createdAt: number; // Timestamp
+  title?: string; 
+  createdAt: number; 
   userId: string;
 }
+export type ChatMessage = {
+  id: string;
+  role: string;
+  content: string;
+};
 
 /**
  * API Response Types
