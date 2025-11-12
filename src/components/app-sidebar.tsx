@@ -34,7 +34,7 @@ export function AppSidebar() {
   const router = useRouter();
   const { setOpenMobile } = useSidebar();
   const [showDeleteAllDialog, setShowDeleteAllDialog] = useState(false);
-  const {user,loading}=useAuth()
+  const {user}=useAuth()
   const {reset}=useCopilotKitConfig()
 
   const handleDeleteAll = () => {
