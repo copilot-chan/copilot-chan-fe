@@ -97,8 +97,7 @@ export function useSessions() {
                 .filter(Boolean)
                 .join(" ");
 
-              const role =
-                event.author === "copilot_chat" ? "assistant" : event.author;
+              const role = event.author === "user" ? "user" : "assistant";
 
               return {
                 id: String(index + 1),
