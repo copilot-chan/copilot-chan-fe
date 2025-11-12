@@ -61,7 +61,6 @@ export const CopilotKitProvider = ({ children }: { children: ReactNode }) => {
             "NEXT_PUBLIC_COPILOKIT_LICENSE_KEY"
           }
           threadId={config.threadId}
-          key={config?.threadId}
         >
           {children}
         </CopilotKit>

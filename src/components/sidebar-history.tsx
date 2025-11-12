@@ -122,7 +122,7 @@ export function SidebarHistory() {
       loadSessions();
     }
     console.log("[ahihi] dda render lai",chats)
-  }, [uid, loadSessions, version, id]);
+  }, [uid, loadSessions, version]);
 
   const handleDelete = async () => {
     if (!deleteId || !uid) return;

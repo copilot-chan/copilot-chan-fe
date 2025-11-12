@@ -321,7 +321,7 @@
 }
 
 .copilotKitMessages {
-  @apply w-full p-100; 
+  @apply  max-w-[760px]; 
 }
 
 /* .copilotkitMessage {

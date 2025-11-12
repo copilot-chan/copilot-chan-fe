@@ -12,17 +12,20 @@ import { useSessions } from "@/hooks/use-sessions";
 
 interface ChatPageClientProps {
   threadId: string;
-  initialMessages: ChatMessage[];
 }
 
 export function ChatPageClient({
   threadId,
-  initialMessages,
 }: ChatPageClientProps) {
   const { configure, config } = useCopilotKitConfig();
   const { setIsFirst } = useAppState();
   const { setIdChatActive } = useSessionHistory();
-  const { token, loading} = useAuth();
+  const { token, loading,user} = useAuth();
+
+  const { getSession } = useSessions();
+   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [fetching, setFetching] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (token && threadId) {
@@ -36,15 +39,34 @@ export function ChatPageClient({
     setIsFirst(false);
   }, [threadId, setIdChatActive, setIsFirst]);
 
+  // Fetch session messages
+  useEffect(() => {
+    if (loading || !token || !user?.uid || !threadId) return;
+    setFetching(true);
+    getSession("copilot-chan", user.uid, threadId)
+      .then((msgs) => setMessages(msgs))
+      .catch((err) => {
+        console.error("Error fetching session:", err);
+        setError(err.message);
+      })
+      .finally(() => setFetching(false));
+  }, [loading, token, user, threadId, getSession]);
+
+
 
   if (loading || !token || !config) {
     return <div>Loading...</div>;
   }
 
+  if (error) {
+    return <div>Error loading session: {error}</div>;
+  }
+
+
   return (
     <>
       <CopilotActionRender />
-      <Chat initialMessages={initialMessages} />
+      <Chat initialMessages={messages} />
     </>
   );
 }

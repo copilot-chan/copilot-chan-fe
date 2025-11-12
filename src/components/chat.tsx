@@ -5,7 +5,7 @@ import { CopilotChat } from "@copilotkit/react-ui";
 import React, { useRef } from "react";
 import { ChatHeader } from "@/components/chat-header";
 import { CopilotActionRender } from "@/components/copilot-actions";
-import { CustomMessages } from "./messages";
+import { CustomErrorMessages, CustomMessages } from "./messages";
 import { useRouter } from "next/navigation";
 import { useSessionHistory } from "./sessions-history-provider";
 import { ChatMessage } from "@/lib/types";
@@ -53,8 +53,8 @@ export function Chat({ initialMessages }: ChatProps) {
             }, 2000);
           }
         }}
-        
-        
+        // onError={(err) => console.error("Copilot error:", err)}
+        // renderError={(error) => <CustomErrorMessages {...error} />}
       />
 
     </div>

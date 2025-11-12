@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Session } from "@/lib/types";
+import { ChatSDKError } from "@/lib/errors";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://127.0.0.1:8000";
+const BACKEND_URL =
+  process.env.NEXT_PUBLIC_BACKEND_URL || "http://127.0.0.1:8000";
 
 /**
  * GET /api/sessions/[sessionId]
  * Query params: appName, userId
  * Path param: sessionId
- * 
+ *
  * Gets a specific session by ID
  */
 export async function GET(
@@ -22,27 +24,24 @@ export async function GET(
 
     // Validate required parameters
     if (!appName || !userId) {
-      return NextResponse.json(
-        {
-          error: "Missing parameters",
-          message: "Both appName and userId are required",
-        },
-        { status: 400 }
+      throw new ChatSDKError(
+        "bad_request:api",
+        "Missing required parameters: appName and userId"
       );
     }
 
     if (!sessionId) {
-      return NextResponse.json(
-        {
-          error: "Missing parameter",
-          message: "sessionId is required",
-        },
-        { status: 400 }
+      throw new ChatSDKError(
+        "bad_request:api",
+        "Missing required parameter: sessionId"
       );
     }
 
     // Get authorization token from request headers
     const authHeader = request.headers.get("authorization");
+    if (!authHeader) {
+      throw new ChatSDKError("unauthorized:chat");
+    }
 
     // Call backend API - Correct endpoint: /apps/{app_name}/users/{user_id}/sessions/{session_id}
     const backendUrl = `${BACKEND_URL}/apps/${appName}/users/${userId}/sessions/${sessionId}`;
@@ -54,14 +53,17 @@ export async function GET(
       },
     });
 
+    // Handle backend errors
+    if (response.status === 404) {
+      throw new ChatSDKError("not_found:chat");
+    }
+    if (response.status === 403) {
+      throw new ChatSDKError("forbidden:chat");
+    }
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      return NextResponse.json(
-        {
-          error: "Backend error",
-          message: errorData.detail || `Failed to fetch session: ${response.statusText}`,
-        },
-        { status: response.status }
+      throw new ChatSDKError(
+        "bad_request:api",
+        `Backend error: ${response.statusText}`
       );
     }
 
@@ -69,14 +71,14 @@ export async function GET(
 
     return NextResponse.json(session, { status: 200 });
   } catch (error) {
-    console.error("Error fetching session:", error);
-    return NextResponse.json(
-      {
-        error: "Internal server error",
-        message: error instanceof Error ? error.message : "Unknown error occurred",
-      },
-      { status: 500 }
-    );
+    if (error instanceof ChatSDKError) {
+      return error.toResponse();
+    }
+    console.error("Unexpected error:", error);
+    return new ChatSDKError(
+      "bad_request:api",
+      error instanceof Error ? error.message : "Unknown error"
+    ).toResponse();
   }
 }
 
@@ -84,7 +86,7 @@ export async function GET(
  * DELETE /api/sessions/[sessionId]
  * Query params: appName, userId
  * Path param: sessionId
- * 
+ *
  * Deletes a specific session by ID
  */
 export async function DELETE(
@@ -136,7 +138,9 @@ export async function DELETE(
       return NextResponse.json(
         {
           error: "Backend error",
-          message: errorData.detail || `Failed to delete session: ${response.statusText}`,
+          message:
+            errorData.detail ||
+            `Failed to delete session: ${response.statusText}`,
         },
         { status: response.status }
       );
@@ -151,10 +155,10 @@ export async function DELETE(
     return NextResponse.json(
       {
         error: "Internal server error",
-        message: error instanceof Error ? error.message : "Unknown error occurred",
+        message:
+          error instanceof Error ? error.message : "Unknown error occurred",
       },
       { status: 500 }
     );
   }
 }
-

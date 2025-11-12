@@ -1,8 +1,9 @@
 
 import "@copilotkit/react-ui/styles.css";
-import { type MessagesProps } from "@copilotkit/react-ui";
+import { ErrorMessageProps, type MessagesProps } from "@copilotkit/react-ui";
 import { motion } from "framer-motion";
-import { SparklesIcon } from "./icons";
+import { SparklesIcon, WarningIcon } from "./icons";
+import { RedoIcon, X } from "lucide-react";
 
 interface ThinkingMessageProps {
   thinkingMessage: string;
@@ -66,5 +67,62 @@ export function CustomMessages({
         );
       })}
     </div>
+  );
+}
+
+
+export function CustomErrorMessages(error: {
+  message: string;
+  operation?: string;
+  timestamp: number;
+  onDismiss: () => void;
+  onRetry?: () => void;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.25 }}
+      className="flex items-start gap-3 p-4 rounded-lg border border-destructive/30 bg-destructive/10 text-destructive relative"
+    >
+      {/* Icon */}
+      <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-destructive/20">
+        <WarningIcon size={18} />
+      </div>
+
+      {/* Nội dung lỗi */}
+      <div className="flex flex-col flex-1">
+        <p className="font-semibold text-sm">{error.message}</p>
+        {error.operation && (
+          <p className="text-xs opacity-70">
+            Operation: <code>{error.operation}</code>
+          </p>
+        )}
+        <p className="text-xs opacity-50 mt-1">
+          {new Date(error.timestamp).toLocaleString()}
+        </p>
+      </div>
+
+      {/* Action buttons */}
+      <div className="flex gap-2">
+        {error.onRetry && (
+          <button
+            onClick={error.onRetry}
+            className="text-destructive hover:text-destructive/80 transition"
+            title="Retry"
+          >
+            <RedoIcon size={16} />
+          </button>
+        )}
+        <button
+          onClick={error.onDismiss}
+          className="text-destructive hover:text-destructive/80 transition"
+          title="Dismiss"
+        >
+          <X size={16} />
+        </button>
+      </div>
+    </motion.div>
   );
 }
