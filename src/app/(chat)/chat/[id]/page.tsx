@@ -1,7 +1,3 @@
-import { fetchSessionMessages } from "@/lib/sessions-server";
-import { getUidFromCookie, getTokenFromCookie } from "@/lib/auth-server";
-import { notFound } from "next/navigation";
-import { CopilotKit } from "@copilotkit/react-core";
 import { ChatPageClient } from "./chat-page-client";
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
