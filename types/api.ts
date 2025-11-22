@@ -57,3 +57,35 @@ export interface ApiErrorResponse {
   message: string;
   statusCode: number;
 }
+
+
+export interface Memory {
+  id: string;
+  memory: string; // 'memory' trong API gốc
+  metadata?: any;
+  categories?: string[];
+  created_at: string;
+  updated_at?: string;
+  expiration_date?: string | null;
+  structured_attributes?: Record<string, any>;
+  [key: string]: any;
+}
+
+export interface MemoriesResponse {
+  results: Memory[];
+  count: number;
+  page: number;
+  page_size: number;
+  has_more?: boolean;
+}
+
+export interface GetMemoriesParams {
+  page?: number;
+  pageSize?: number;
+  authorization: string;
+}
+
+export interface DeleteMemoryParams {
+  memoryId: string;
+  authorization: string;
+}

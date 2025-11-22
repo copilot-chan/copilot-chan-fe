@@ -1,6 +1,8 @@
 import { AppError } from "./error";
 
-export const fetcher = async (url: string, token?: string) => {
+export const fetcher = async (key: [string, string]) => {
+  const [url, token] = key;
+
   const headers: HeadersInit = {
     "Content-Type": "application/json",
   };
@@ -12,17 +14,33 @@ export const fetcher = async (url: string, token?: string) => {
   const res = await fetch(url, { headers });
 
   if (!res.ok) {
-    let errorMessage = res.statusText;
-    let errorCode = "API_ERROR";
+    let message = res.statusText;
+    let code = "API_ERROR";
+
     try {
-      const errorData = await res.json();
-      errorMessage = errorData.message || errorData.error || errorMessage;
-      errorCode = errorData.code || errorCode;
-    } catch (e) {
-      // Ignore json parse error
-    }
-    throw new AppError(errorMessage, res.status, errorCode);
+      const data = await res.json();
+      message = data.message || data.error || message;
+      code = data.code || code;
+    } catch {}
+
+    throw new AppError(message, res.status, code);
   }
 
   return res.json();
+};
+
+
+export const authFetcher = async ([url, token]: [string, string]) => {
+  const response = await fetch(url, {
+    headers: {
+      'Authorization':  `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const { code, cause } = await response.json();
+    throw new AppError(cause);
+  }
+
+  return response.json();
 };

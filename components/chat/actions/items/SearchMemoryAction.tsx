@@ -20,7 +20,7 @@ export function SearchMemoryAction() {
       return (
         <ActionResultCard 
           icon={CheckCircle2}
-          iconColor="text-green-500"
+          iconColor="text-accent"
           label="Đã tìm thấy thông tin liên quan đến:"
           value={args?.query}
         />

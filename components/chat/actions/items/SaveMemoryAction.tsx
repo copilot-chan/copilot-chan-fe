@@ -20,7 +20,6 @@ export function SaveMemoryAction() {
       return (
         <ActionResultCard 
           icon={CheckCircle2}
-          iconColor="text-blue-500"
           label="Đã ghi nhớ:"
           value={args?.key}
         />

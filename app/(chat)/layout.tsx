@@ -4,6 +4,7 @@ import { useAuth } from "@/components/providers/AuthProvider";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { ChatSidebar } from "@/components/chat/sidebar/ChatSidebar";
+import { Settings } from "@/components/chat/settings";
 
 export default function ChatLayout({
   children,
@@ -32,11 +33,13 @@ export default function ChatLayout({
   }
 
   return (
-    <div className="flex h-screen bg-zinc-950 text-white">
-      <ChatSidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {children}
+
+      <div className="flex h-screen bg-zinc-950 text-white">
+        <ChatSidebar />
+        <Settings />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {children}
+        </div>
       </div>
-    </div>
   );
 }

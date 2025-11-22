@@ -4,6 +4,9 @@ import { CopilotKit } from "@copilotkit/react-core";
 import { AuthProvider, useAuth } from "@/components/providers/AuthProvider";
 import { ChatSessionProvider, useChatSession } from "@/components/providers/ChatSessionProvider";
 import "@copilotkit/react-ui/styles.css";
+import { SidebarProvider } from "./SidebarProvider";
+import { SettingsProvier } from "../chat/settings/settings-provider";
+import { ThemeProvider } from "./ThemeProvider";
 
 function CopilotKitWrapper({ children }: { children: React.ReactNode }) {
   const { token } = useAuth();
@@ -29,10 +32,17 @@ function CopilotKitWrapper({ children }: { children: React.ReactNode }) {
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
-    <AuthProvider>
-      <ChatSessionProvider>
-        <CopilotKitWrapper>{children}</CopilotKitWrapper>
-      </ChatSessionProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <ChatSessionProvider>
+          <SidebarProvider>
+            <SettingsProvier>
+              <CopilotKitWrapper>{children}</CopilotKitWrapper>
+            </SettingsProvier>
+          </SidebarProvider>
+        </ChatSessionProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
+

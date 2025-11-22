@@ -22,8 +22,8 @@ export function ChatItem({ chat, onDelete }: ChatItemProps) {
         href={`/chat/${chat.id}`}
         className={`flex-1 block px-3 py-2 rounded text-sm transition-colors truncate ${
           isActive
-            ? "bg-zinc-800 text-white"
-            : "text-zinc-400 hover:bg-zinc-800 hover:text-white"
+            ? "bg-sidebar-accent text-sidebar-accent-foreground"
+            : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
         }`}
         title={displayTitle}
       >
@@ -36,7 +36,7 @@ export function ChatItem({ chat, onDelete }: ChatItemProps) {
             e.stopPropagation();
             onDelete(chat.id);
           }}
-          className="absolute right-2 opacity-0 group-hover:opacity-100 text-zinc-500 hover:text-red-500 transition-opacity px-1"
+          className="absolute right-2 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-opacity px-1"
           title="Delete Chat"
         >
           ×

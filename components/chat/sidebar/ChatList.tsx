@@ -12,7 +12,7 @@ export function ChatList() {
 
   const { data: sessions } = useSWR<Chat[]>(
     user && token ? [`/api/chats?userId=${user.uid}`, token] : null,
-    ([url, token]: [string, string]) => fetcher(url, token),
+    fetcher,
     { 
       suspense: true,
       fallbackData: [], // Optional: provide initial data if needed
@@ -58,7 +58,7 @@ export function ChatList() {
   };
 
   if (!sessions || sessions.length === 0) {
-    return <div className="p-4 text-zinc-500 text-sm text-center">No chats yet</div>;
+    return <div className="p-4 text-muted-foreground text-sm text-center">No chats yet</div>;
   }
 
   return (

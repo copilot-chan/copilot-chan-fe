@@ -20,18 +20,21 @@ export function useChatLogic() {
   });
 
   // Fetch chat history if sessionId exists and we have a user token
-  const { data: chatData, isLoading } = useSWR<Chat>(
-    sessionId && user && token ? [`/api/chats/${sessionId}?userId=${user.uid}`, token] : null,
-    ([url, token]: [string, string]) => fetcher(url, token),
-    {
-      shouldRetryOnError: false,
-      onError: (err) => {
-        if (err.statusCode !== 404) {
-          console.error("Error fetching chat history:", err);
-        }
+const { data: chatData, isLoading } = useSWR<Chat>(
+  sessionId && user && token
+    ? [`/api/chats/${sessionId}?userId=${user.uid}`, token]
+    : null,
+  fetcher,
+  {
+    shouldRetryOnError: false,
+    onError: (err) => {
+      if (err.statusCode !== 404) {
+        console.error("Error fetching chat history:", err);
       }
     }
-  );
+  }
+);
+
 
   const handleMessageSent = async (message: string) => {
     if (pathname === "/" && sessionId) {
@@ -45,7 +48,7 @@ export function useChatLogic() {
     }, 2000);
   };
 
-  // Update chat list when title changes in agent state
+
   useEffect(() => {
     if (state?.title && user && token) {
       // Debounce or check if needed, but for now just refresh the list

@@ -7,12 +7,12 @@ interface ActionResultCardProps {
   value?: string;
 }
 
-export function ActionResultCard({ icon: Icon, iconColor = "text-blue-500", label, value }: ActionResultCardProps) {
+export function ActionResultCard({ icon: Icon, iconColor = "text-primary", label, value }: ActionResultCardProps) {
   return (
-    <div className="flex items-center gap-2 p-3 my-2 rounded-lg bg-zinc-900/50 border border-zinc-800 text-sm text-zinc-300">
+    <div className="flex items-center gap-2 p-3 my-2 rounded-lg bg-card border border-border text-sm text-muted-foreground">
       <Icon className={`w-4 h-4 ${iconColor}`} />
       <span>
-        {label} {value && <span className="font-medium text-white">{value}</span>}
+        {label} {value && <span className="font-medium text-foreground">{value}</span>}
       </span>
     </div>
   );

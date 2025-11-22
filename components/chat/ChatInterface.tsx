@@ -26,14 +26,14 @@ export function ChatInterface({ chatId }: { chatId?: string }) {
 
   if (isLoading && sessionId) {
      return (
-       <div className="flex h-screen w-full items-center justify-center bg-zinc-950 text-white">
+       <div className="flex h-screen w-full items-center justify-center bg-background text-foreground">
          <LoadingSpinner text="Loading conversation..." />
        </div>
      );
   }
 
   return (
-    <div className="flex h-screen w-full flex-col bg-zinc-950 text-white">
+    <div className="flex h-screen w-full flex-col bg-background text-foreground">
       <div className="flex-1 overflow-hidden relative">
         <CopilotActions />
         <CopilotChat

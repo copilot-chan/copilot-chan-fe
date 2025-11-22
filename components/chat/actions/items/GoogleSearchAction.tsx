@@ -20,7 +20,7 @@ export function GoogleSearchAction() {
       return (
         <ActionResultCard 
           icon={Globe}
-          iconColor="text-indigo-500"
+          iconColor="text-secondary"
           label="Đã tìm kiếm Google:"
           value={args?.query}
         />

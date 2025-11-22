@@ -232,13 +232,13 @@
 
 .cm-editor,
 .cm-gutters {
-  @apply bg-background! dark:bg-zinc-800! outline-hidden! selection:bg-zinc-900!;
+  @apply bg-background! outline-hidden! selection:bg-muted!;
 }
 
 .ͼo.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground,
 .ͼo.cm-selectionBackground,
 .ͼo.cm-content::selection {
-  @apply bg-zinc-200! dark:bg-zinc-900!;
+  @apply bg-muted!;
 }
 
 .cm-activeLine,
@@ -325,7 +325,7 @@
 }
 
 /* .copilotkitMessage {
-  @apply max-w-[760px] my-2 p-24 rounded-xl bg-gray-100;
+  @apply max-w-[760px] my-2 p-24 rounded-xl bg-muted;
 } */
 
 .copilotKitInput {
