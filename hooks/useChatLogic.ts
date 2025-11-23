@@ -10,7 +10,7 @@ import {
   Role,
   TextMessage,
 } from "@copilotkit/runtime-client-gql";
-import { useMemo, useEffect } from "react";
+import { useMemo, useEffect, useRef } from "react";
 import { useCoAgent } from "@copilotkit/react-core";
 import { useOptimisticChat } from "@/components/providers/OptimisticChatProvider";
 
@@ -19,6 +19,7 @@ export function useChatLogic() {
   const pathname = usePathname();
   const { user, token } = useAuth();
   const { addOptimisticSession } = useOptimisticChat();
+  const optimisticAddedRef = useRef<Set<string>>(new Set());
 
   // Listen to agent state for title updates
   const { state } = useCoAgent<{ title?: string }>({
@@ -33,6 +34,7 @@ export function useChatLogic() {
     fetcher,
     {
       shouldRetryOnError: false,
+      revalidateOnFocus: false, // Prevent refetch when browser regains focus
       onError: (err) => {
         if (err.statusCode !== 404) {
           console.error("Error fetching chat history:", err);
@@ -41,37 +43,60 @@ export function useChatLogic() {
     }
   );
 
+  // Fetch all chats for sidebar
+  const { data: allChats } = useSWR<Chat[]>(
+    user && token ? [`/api/chats?userId=${user.uid}`, token] : null,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+    }
+  );
+
   const handleMessageSent = async (message: string) => {
+    // Only run optimistic update when creating NEW chat from home page
     if (pathname === "/" && sessionId && user && token) {
       // Navigate immediately
       window.history.pushState(null, "", `/chat/${sessionId}`);
 
-      // Mark as optimistic
-      addOptimisticSession(sessionId);
+      // Check if we already added optimistic for this session
+      if (optimisticAddedRef.current.has(sessionId)) {
+        return;
+      }
 
-      // Create optimistic chat object
-      const optimisticChat: Chat = {
-        id: sessionId,
-        appName: "copilot-assistant",
-        userId: user.uid,
-        events: [],
-        state: {
-          title: message.slice(0, 50) + (message.length > 50 ? "..." : ""),
-        },
-        createTime: Date.now(),
-        updateTime: Date.now(),
-      };
+      // Check if chat exists in SWR cache
+      const chatExists = allChats?.some((chat) => chat.id === sessionId);
 
-      // Optimistic update
-      mutate(
-        [`/api/chats?userId=${user.uid}`, token],
-        (currentData: Chat[] | undefined) => {
-          const existing = currentData || [];
-          const alreadyExists = existing.some((chat) => chat.id === sessionId);
-          return alreadyExists ? existing : [optimisticChat, ...existing];
-        },
-        false
-      );
+      // Only add optimistic if chat doesn't exist yet
+      if (!chatExists) {
+        // Mark as added
+        optimisticAddedRef.current.add(sessionId);
+
+        // Mark as optimistic
+        addOptimisticSession(sessionId);
+
+        // Create optimistic chat object
+        const optimisticChat: Chat = {
+          id: sessionId,
+          appName: "copilot-assistant",
+          userId: user.uid,
+          events: [],
+          state: {
+            title: message.slice(0, 50) + (message.length > 50 ? "..." : ""),
+          },
+          createTime: Date.now(),
+          updateTime: Date.now(),
+        };
+
+        // Optimistic update
+        mutate(
+          [`/api/chats?userId=${user.uid}`, token],
+          (currentData: Chat[] | undefined) => {
+            const existing = currentData || [];
+            return [optimisticChat, ...existing];
+          },
+          false
+        );
+      }
 
       // Revalidate after 2s
       setTimeout(() => {
