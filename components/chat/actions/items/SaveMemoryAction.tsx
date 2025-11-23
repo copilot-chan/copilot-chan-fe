@@ -6,7 +6,7 @@ import { ActionResultCard } from "../ui/ActionResultCard";
 export function SaveMemoryAction() {
   useCopilotAction({
     name: "save_memory",
-    available: "remote",
+    available: "frontend",
     render: ({ status, args }) => {
       if (status !== "complete") {
         return (
@@ -18,7 +18,7 @@ export function SaveMemoryAction() {
         );
       }
       return (
-        <ActionResultCard 
+        <ActionResultCard
           icon={CheckCircle2}
           label="Đã ghi nhớ:"
           value={args?.key}

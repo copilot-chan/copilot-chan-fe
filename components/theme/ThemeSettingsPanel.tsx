@@ -5,27 +5,29 @@
 
 "use client";
 
-import { useTheme } from '@/components/providers/ThemeProvider';
-import { ThemeMode } from '@/types/theme';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/Separator';
-import { Sun, Moon, Monitor, Palette, Check } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { useTheme } from "@/components/providers/ThemeProvider";
+import { ThemeMode } from "@/types/theme";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/Separator";
+import { Sun, Moon, Monitor, Palette, Check } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 /**
  * Theme Settings Panel
  * Comprehensive theme configuration interface
  */
 export function ThemeSettingsPanel() {
-  const { 
-    currentTheme, 
-    availableThemes, 
-    setTheme, 
-    themeMode, 
+  const {
+    currentTheme,
+    availableThemes,
+    setTheme,
+    themeMode,
     setThemeMode,
-    isMounted 
+    isMounted,
+    resolvedTheme,
+    isDark,
   } = useTheme();
-  
+
   if (!isMounted) {
     return (
       <div className="space-y-6 animate-pulse">
@@ -34,28 +36,33 @@ export function ThemeSettingsPanel() {
       </div>
     );
   }
-  
-  const modes: Array<{ id: ThemeMode; icon: typeof Sun; label: string; description: string }> = [
+
+  const modes: Array<{
+    id: ThemeMode;
+    icon: typeof Sun;
+    label: string;
+    description: string;
+  }> = [
     {
-      id: 'light',
+      id: "light",
       icon: Sun,
-      label: 'Light',
-      description: 'Always use light theme'
+      label: "Light",
+      description: "Always use light theme",
     },
     {
-      id: 'dark',
+      id: "dark",
       icon: Moon,
-      label: 'Dark',
-      description: 'Always use dark theme'
+      label: "Dark",
+      description: "Always use dark theme",
     },
     {
-      id: 'auto',
+      id: "auto",
       icon: Monitor,
-      label: 'Auto',
-      description: 'Follow system preference'
-    }
+      label: "Auto",
+      description: "Follow system preference",
+    },
   ];
-  
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -68,9 +75,9 @@ export function ThemeSettingsPanel() {
           Customize the appearance of the application
         </p>
       </div>
-      
+
       <Separator />
-      
+
       {/* Mode Selection */}
       <div className="space-y-3">
         <Label className="text-base">Color Mode</Label>
@@ -78,11 +85,24 @@ export function ThemeSettingsPanel() {
           {modes.map((mode) => {
             const Icon = mode.icon;
             const isActive = themeMode === mode.id;
-            
+
             return (
               <button
                 key={mode.id}
-                onClick={() => setThemeMode(mode.id)}
+                onClick={() => {
+                  console.log(resolvedTheme, currentTheme.id);
+                  console.log(currentTheme.type);
+                  console.log(mode.id);
+                  if (resolvedTheme !== currentTheme.id) {
+                    const fallback = availableThemes.find(
+                      (t) => t.type === currentTheme.type
+                    );
+                    if (fallback) {
+                      setTheme(fallback.id);
+                    }
+                  }
+                  setThemeMode(mode.id);
+                }}
                 className={cn(
                   "relative p-4 rounded-lg border-2 text-left transition-all",
                   "hover:border-primary/50 hover:shadow-sm",
@@ -93,22 +113,24 @@ export function ThemeSettingsPanel() {
                 )}
               >
                 <div className="flex items-start gap-3">
-                  <div className={cn(
-                    "p-2 rounded-md",
-                    isActive ? "bg-primary/10" : "bg-muted"
-                  )}>
-                    <Icon className={cn(
-                      "h-4 w-4",
-                      isActive ? "text-primary" : "text-muted-foreground"
-                    )} />
+                  <div
+                    className={cn(
+                      "p-2 rounded-md",
+                      isActive ? "bg-primary/10" : "bg-muted"
+                    )}
+                  >
+                    <Icon
+                      className={cn(
+                        "h-4 w-4",
+                        isActive ? "text-primary" : "text-muted-foreground"
+                      )}
+                    />
                   </div>
-                  
+
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="font-medium">{mode.label}</span>
-                      {isActive && (
-                        <Check className="h-4 w-4 text-primary" />
-                      )}
+                      {isActive && <Check className="h-4 w-4 text-primary" />}
                     </div>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {mode.description}
@@ -120,24 +142,29 @@ export function ThemeSettingsPanel() {
           })}
         </div>
       </div>
-      
+
       <Separator />
-      
+
       {/* Theme Presets */}
       <div className="space-y-3">
         <Label className="text-base">Theme Presets</Label>
         <p className="text-sm text-muted-foreground">
           Choose from our collection of beautiful themes
         </p>
-        
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
           {availableThemes.map((theme) => {
             const isActive = currentTheme.id === theme.id;
-            
+
             return (
               <button
                 key={theme.id}
-                onClick={() => setTheme(theme.id)}
+                onClick={() => {
+                  if (theme.type !== themeMode) {
+                    setThemeMode(theme.type);
+                  }
+                  setTheme(theme.id);
+                }}
                 className={cn(
                   "relative p-4 rounded-lg border-2 text-left transition-all",
                   "hover:border-primary/50 hover:shadow-sm",
@@ -150,30 +177,28 @@ export function ThemeSettingsPanel() {
                 <div className="flex items-center gap-3">
                   {/* Color Preview */}
                   <div className="flex gap-1">
-                    <div 
+                    <div
                       className="h-10 w-3 rounded-sm border border-border"
                       style={{ backgroundColor: theme.colors.primary }}
                       aria-hidden="true"
                     />
-                    <div 
+                    <div
                       className="h-10 w-3 rounded-sm border border-border"
                       style={{ backgroundColor: theme.colors.accent }}
                       aria-hidden="true"
                     />
-                    <div 
+                    <div
                       className="h-10 w-3 rounded-sm border border-border"
                       style={{ backgroundColor: theme.colors.secondary }}
                       aria-hidden="true"
                     />
                   </div>
-                  
+
                   {/* Theme Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="font-medium">{theme.name}</span>
-                      {isActive && (
-                        <Check className="h-4 w-4 text-primary" />
-                      )}
+                      {isActive && <Check className="h-4 w-4 text-primary" />}
                     </div>
                     <p className="text-xs text-muted-foreground capitalize">
                       {theme.type} theme
@@ -185,11 +210,13 @@ export function ThemeSettingsPanel() {
           })}
         </div>
       </div>
-      
+
       {/* Info Box */}
       <div className="rounded-lg bg-muted/50 p-4 text-sm">
         <p className="text-muted-foreground">
-          <strong className="text-foreground">Tip:</strong> Your theme preference is automatically saved and will be applied across all your sessions.
+          <strong className="text-foreground">Tip:</strong> Your theme
+          preference is automatically saved and will be applied across all your
+          sessions.
         </p>
       </div>
     </div>

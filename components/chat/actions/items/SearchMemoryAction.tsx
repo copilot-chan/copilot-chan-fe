@@ -6,7 +6,7 @@ import { ActionResultCard } from "../ui/ActionResultCard";
 export function SearchMemoryAction() {
   useCopilotAction({
     name: "search_memory",
-    available: "remote",
+    available: "frontend",
     render: ({ status, args }) => {
       if (status !== "complete") {
         return (
@@ -18,7 +18,7 @@ export function SearchMemoryAction() {
         );
       }
       return (
-        <ActionResultCard 
+        <ActionResultCard
           icon={CheckCircle2}
           iconColor="text-accent"
           label="Đã tìm thấy thông tin liên quan đến:"

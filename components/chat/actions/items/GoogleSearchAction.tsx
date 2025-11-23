@@ -6,7 +6,7 @@ import { ActionResultCard } from "../ui/ActionResultCard";
 export function GoogleSearchAction() {
   useCopilotAction({
     name: "google_search_agent",
-    available: "remote",
+    available: "frontend",
     render: ({ status, args }) => {
       if (status !== "complete") {
         return (
@@ -18,7 +18,7 @@ export function GoogleSearchAction() {
         );
       }
       return (
-        <ActionResultCard 
+        <ActionResultCard
           icon={Globe}
           iconColor="text-secondary"
           label="Đã tìm kiếm Google:"
