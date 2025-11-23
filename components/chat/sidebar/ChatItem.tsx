@@ -3,18 +3,33 @@
 import Link from "next/link";
 import { Chat } from "@/types/api";
 import { usePathname } from "next/navigation";
+import { useOptimisticChat } from "@/components/providers/OptimisticChatProvider";
+import { Skeleton } from "@/components/ui/skeleton";
+import { DeleteChatDialog } from "./DeleteChatDialog";
 
 interface ChatItemProps {
   chat: Chat;
-  onDelete?: (id: string) => void;
+  onDelete?: (id: string) => Promise<void>;
 }
 
 export function ChatItem({ chat, onDelete }: ChatItemProps) {
   const pathname = usePathname();
+  const { isOptimistic } = useOptimisticChat();
   const isActive = pathname === `/chat/${chat.id}`;
-  
+  const isOptimisticItem = isOptimistic(chat.id);
+
   // Determine display title: use state.title, or appName + id
-  const displayTitle = chat.state?.title || chat.appName || `Chat ${chat.id.slice(0, 4)}`;
+  const displayTitle =
+    chat.state?.title || chat.appName || `Chat ${chat.id.slice(0, 4)}`;
+
+  // Show skeleton for optimistic items
+  if (isOptimisticItem) {
+    return (
+      <div className="px-3 py-2 rounded bg-sidebar-accent/50 animate-pulse">
+        <Skeleton className="h-4 w-3/4 bg-sidebar-accent-foreground/20" />
+      </div>
+    );
+  }
 
   return (
     <div className="group relative flex items-center">
@@ -29,19 +44,7 @@ export function ChatItem({ chat, onDelete }: ChatItemProps) {
       >
         {displayTitle}
       </Link>
-      {onDelete && (
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onDelete(chat.id);
-          }}
-          className="absolute right-2 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-opacity px-1"
-          title="Delete Chat"
-        >
-          ×
-        </button>
-      )}
+      {onDelete && <DeleteChatDialog chatId={chat.id} onDelete={onDelete} />}
     </div>
   );
 }

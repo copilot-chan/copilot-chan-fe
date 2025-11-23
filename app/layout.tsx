@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { AppProviders } from "@/components/providers/AppProviders";
 import { ThemeScript } from "@/components/theme/ThemeScript";
+import { OptimisticChatProvider } from "@/components/providers/OptimisticChatProvider"; // Added this line
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Copilot Chan",
@@ -20,6 +22,7 @@ export default function RootLayout({
         <ThemeScript />
       </head>
       <body>
+        <Toaster position="top-center" />
         <AppProviders>{children}</AppProviders>
       </body>
     </html>

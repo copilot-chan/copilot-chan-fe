@@ -13,52 +13,50 @@ export function ChatList() {
   const { data: sessions } = useSWR<Chat[]>(
     user && token ? [`/api/chats?userId=${user.uid}`, token] : null,
     fetcher,
-    { 
+    {
       suspense: true,
-      fallbackData: [], // Optional: provide initial data if needed
-      revalidateOnFocus: false
+      fallbackData: [],
+      revalidateOnFocus: false,
     }
   );
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this chat?")) return;
-    
-    try {
-      // Optimistic update: remove item immediately
-      mutate(
-        [`/api/chats?userId=${user?.uid}`, token],
-        (currentData: Chat[] | undefined) => currentData?.filter(chat => chat.id !== id),
-        false
-      );
+  const handleDelete = async (id: string): Promise<void> => {
+    // Optimistic update: remove item immediately
+    mutate(
+      [`/api/chats?userId=${user?.uid}`, token],
+      (currentData: Chat[] | undefined) =>
+        currentData?.filter((chat) => chat.id !== id),
+      false
+    );
 
-      const res = await fetch(`/api/chats/${id}?userId=${user?.uid}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+    const res = await fetch(`/api/chats/${id}?userId=${user?.uid}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-      if (!res.ok) {
-        throw new Error("Failed to delete chat");
-      }
-
-      // Revalidate to ensure sync
-      mutate([`/api/chats?userId=${user?.uid}`, token]);
-      
-      // If we deleted the current chat, redirect to new chat
-      if (window.location.pathname === `/chat/${id}`) {
-        window.location.href = "/";
-      }
-    } catch (error) {
-      console.error("Error deleting chat:", error);
-      alert("Failed to delete chat. Please try again.");
+    if (!res.ok) {
       // Revert optimistic update
       mutate([`/api/chats?userId=${user?.uid}`, token]);
+      throw new Error("Failed to delete chat");
+    }
+
+    // Revalidate to ensure sync
+    mutate([`/api/chats?userId=${user?.uid}`, token]);
+
+    // If we deleted the current chat, redirect to new chat
+    if (window.location.pathname === `/chat/${id}`) {
+      window.location.href = "/";
     }
   };
 
   if (!sessions || sessions.length === 0) {
-    return <div className="p-4 text-muted-foreground text-sm text-center">No chats yet</div>;
+    return (
+      <div className="p-4 text-muted-foreground text-sm text-center">
+        No chats yet
+      </div>
+    );
   }
 
   return (

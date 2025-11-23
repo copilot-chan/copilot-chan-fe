@@ -12,11 +12,13 @@ import {
 } from "@copilotkit/runtime-client-gql";
 import { useMemo, useEffect } from "react";
 import { useCoAgent } from "@copilotkit/react-core";
+import { useOptimisticChat } from "@/components/providers/OptimisticChatProvider";
 
 export function useChatLogic() {
   const { sessionId } = useChatSession();
   const pathname = usePathname();
   const { user, token } = useAuth();
+  const { addOptimisticSession } = useOptimisticChat();
 
   // Listen to agent state for title updates
   const { state } = useCoAgent<{ title?: string }>({
@@ -40,15 +42,42 @@ export function useChatLogic() {
   );
 
   const handleMessageSent = async (message: string) => {
-    if (pathname === "/" && sessionId) {
+    if (pathname === "/" && sessionId && user && token) {
+      // Navigate immediately
       window.history.pushState(null, "", `/chat/${sessionId}`);
-    }
 
-    // setTimeout(() => {
-    //   if (user && token) {
-    //     mutate([`/api/chats?userId=${user.uid}`, token]);
-    //   }
-    // }, 2000);
+      // Mark as optimistic
+      addOptimisticSession(sessionId);
+
+      // Create optimistic chat object
+      const optimisticChat: Chat = {
+        id: sessionId,
+        appName: "copilot-assistant",
+        userId: user.uid,
+        events: [],
+        state: {
+          title: message.slice(0, 50) + (message.length > 50 ? "..." : ""),
+        },
+        createTime: Date.now(),
+        updateTime: Date.now(),
+      };
+
+      // Optimistic update
+      mutate(
+        [`/api/chats?userId=${user.uid}`, token],
+        (currentData: Chat[] | undefined) => {
+          const existing = currentData || [];
+          const alreadyExists = existing.some((chat) => chat.id === sessionId);
+          return alreadyExists ? existing : [optimisticChat, ...existing];
+        },
+        false
+      );
+
+      // Revalidate after 2s
+      setTimeout(() => {
+        mutate([`/api/chats?userId=${user.uid}`, token]);
+      }, 2000);
+    }
   };
 
   useEffect(() => {
