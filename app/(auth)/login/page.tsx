@@ -3,6 +3,7 @@
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 
 export default function LoginPage() {
   const { user, login, loading } = useAuth();
@@ -13,10 +14,6 @@ export default function LoginPage() {
       router.push("/");
     }
   }, [user, loading, router]);
-
-import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
-
-// ...
 
   if (loading) {
     return (

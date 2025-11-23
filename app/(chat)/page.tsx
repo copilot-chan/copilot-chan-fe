@@ -1,4 +1,3 @@
-import { ChatHeader } from "@/components/chat/ChatHeader";
 import { ChatInterface } from "@/components/chat/ChatInterface";
 
 export default function Home() {

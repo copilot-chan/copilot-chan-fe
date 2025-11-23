@@ -5,7 +5,11 @@ import useSWR from "swr";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { fetcher } from "@/lib/api";
 import { Chat, Message } from "@/types/api";
-import { Message as CopilotMessage, Role, TextMessage } from "@copilotkit/runtime-client-gql";
+import {
+  Message as CopilotMessage,
+  Role,
+  TextMessage,
+} from "@copilotkit/runtime-client-gql";
 import { useMemo, useEffect } from "react";
 import { useCoAgent } from "@copilotkit/react-core";
 
@@ -20,34 +24,32 @@ export function useChatLogic() {
   });
 
   // Fetch chat history if sessionId exists and we have a user token
-const { data: chatData, isLoading } = useSWR<Chat>(
-  sessionId && user && token
-    ? [`/api/chats/${sessionId}?userId=${user.uid}`, token]
-    : null,
-  fetcher,
-  {
-    shouldRetryOnError: false,
-    onError: (err) => {
-      if (err.statusCode !== 404) {
-        console.error("Error fetching chat history:", err);
-      }
+  const { data: chatData, isLoading } = useSWR<Chat>(
+    sessionId && user && token
+      ? [`/api/chats/${sessionId}?userId=${user.uid}`, token]
+      : null,
+    fetcher,
+    {
+      shouldRetryOnError: false,
+      onError: (err) => {
+        if (err.statusCode !== 404) {
+          console.error("Error fetching chat history:", err);
+        }
+      },
     }
-  }
-);
-
+  );
 
   const handleMessageSent = async (message: string) => {
     if (pathname === "/" && sessionId) {
       window.history.pushState(null, "", `/chat/${sessionId}`);
     }
-    
-    setTimeout(() => {
-      if (user && token) {
-        mutate([`/api/chats?userId=${user.uid}`, token]);
-      }
-    }, 2000);
-  };
 
+    // setTimeout(() => {
+    //   if (user && token) {
+    //     mutate([`/api/chats?userId=${user.uid}`, token]);
+    //   }
+    // }, 2000);
+  };
 
   useEffect(() => {
     if (state?.title && user && token) {
@@ -60,7 +62,7 @@ const { data: chatData, isLoading } = useSWR<Chat>(
   // Transform backend messages to Copilot messages
   const initialMessages = useMemo(() => {
     if (!chatData?.events) return [];
-    
+
     return chatData.events.map((msg: Message) => {
       let content = "";
       if (msg.content) {
@@ -83,6 +85,6 @@ const { data: chatData, isLoading } = useSWR<Chat>(
     isLoading,
     handleMessageSent,
     initialMessages,
-    sessionId
+    sessionId,
   };
 }

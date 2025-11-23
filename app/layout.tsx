@@ -4,8 +4,6 @@ import "./globals.css";
 import { AppProviders } from "@/components/providers/AppProviders";
 import { ThemeScript } from "@/components/theme/ThemeScript";
 
-const inter = Inter({ subsets: ["latin"] });
-
 export const metadata: Metadata = {
   title: "Copilot Chan",
   description: "AI Chatbot powered by CopilotKit",
@@ -21,7 +19,7 @@ export default function RootLayout({
       <head>
         <ThemeScript />
       </head>
-      <body className={inter.className}>
+      <body>
         <AppProviders>{children}</AppProviders>
       </body>
     </html>

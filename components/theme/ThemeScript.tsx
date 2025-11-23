@@ -3,6 +3,7 @@
  * Prevents flash of unstyled content (FOUC) on page load
  * This script runs before React hydration to apply the saved theme immediately
  */
+"use client";
 
 export function ThemeScript() {
   // Inline script that runs immediately on page load
@@ -46,7 +47,7 @@ export function ThemeScript() {
       }
     })();
   `;
-  
+
   return (
     <script
       dangerouslySetInnerHTML={{ __html: themeScript }}
