@@ -5,6 +5,7 @@ import useSWR from "swr";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { fetcher } from "@/lib/api";
 import { Chat, Message } from "@/types/api";
+import { parseMessages } from "@/lib/partParsers";
 import {
   Message as CopilotMessage,
   Role,
@@ -117,22 +118,7 @@ export function useChatLogic() {
   const initialMessages = useMemo(() => {
     if (!chatData?.events) return [];
 
-    return chatData.events.map((msg: Message) => {
-      let content = "";
-      if (msg.content) {
-        content = msg.content.text || "";
-        if (!content && msg.content.parts && msg.content.parts.length > 0) {
-          content = msg.content.parts.map((p: any) => p.text).join("\n");
-        }
-      }
-
-      return new TextMessage({
-        id: msg.id || crypto.randomUUID(),
-        role: msg.author === "user" ? Role.User : Role.Assistant,
-        content: content,
-        createdAt: msg.timestamp ? new Date(msg.timestamp) : new Date(),
-      });
-    });
+    return parseMessages(chatData.events);
   }, [chatData]);
 
   return {
