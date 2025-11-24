@@ -15,7 +15,8 @@ export async function GET(
       throw new AppError("Missing userId", 400, "MISSING_PARAM");
     }
 
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+    const backendUrl =
+      process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
     const appName = "copilot-chan";
     const url = `${backendUrl}/apps/${appName}/users/${userId}/sessions/${id}`;
 
@@ -29,6 +30,7 @@ export async function GET(
     await checkFetchError(res);
 
     const data = await res.json();
+    console.log(data);
     return NextResponse.json(data);
   } catch (error) {
     return handleApiError(error);
@@ -49,7 +51,8 @@ export async function DELETE(
       throw new AppError("Missing userId", 400, "MISSING_PARAM");
     }
 
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+    const backendUrl =
+      process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
     const appName = "copilot-chan";
     const url = `${backendUrl}/apps/${appName}/users/${userId}/sessions/${id}`;
 
