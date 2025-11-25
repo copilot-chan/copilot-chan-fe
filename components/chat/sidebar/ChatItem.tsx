@@ -6,6 +6,11 @@ import { usePathname } from "next/navigation";
 import { useOptimisticChat } from "@/components/providers/OptimisticChatProvider";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DeleteChatDialog } from "./DeleteChatDialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface ChatItemProps {
   chat: Chat;
@@ -20,7 +25,7 @@ export function ChatItem({ chat, onDelete }: ChatItemProps) {
 
   // Determine display title: use state.title, or appName + id
   const displayTitle =
-    chat.state?.title || chat.appName || `Chat ${chat.id.slice(0, 4)}`;
+    chat.state?.title || "New Chat" || `Chat ${chat.id.slice(0, 4)}`;
 
   // Show skeleton for optimistic items
   if (isOptimisticItem) {
@@ -33,17 +38,24 @@ export function ChatItem({ chat, onDelete }: ChatItemProps) {
 
   return (
     <div className="group relative flex items-center">
-      <Link
-        href={`/chat/${chat.id}`}
-        className={`flex-1 block px-3 py-2 rounded text-sm transition-colors truncate ${
-          isActive
-            ? "bg-sidebar-accent text-sidebar-accent-foreground"
-            : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-        }`}
-        title={displayTitle}
-      >
-        {displayTitle}
-      </Link>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Link
+            href={`/chat/${chat.id}`}
+            className={`flex-1 block px-3 py-2 rounded text-sm transition-colors truncate ${
+              isActive
+                ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+            }`}
+          >
+            {displayTitle}
+          </Link>
+        </TooltipTrigger>
+        <TooltipContent side="right">
+          <p>{displayTitle}</p>
+        </TooltipContent>
+      </Tooltip>
+
       {onDelete && <DeleteChatDialog chatId={chat.id} onDelete={onDelete} />}
     </div>
   );

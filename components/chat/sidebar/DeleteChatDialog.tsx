@@ -13,6 +13,13 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface DeleteChatDialogProps {
   chatId: string;
@@ -39,12 +46,19 @@ export function DeleteChatDialog({ chatId, onDelete }: DeleteChatDialogProps) {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <button
-          className="absolute right-2 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-opacity px-1"
-          title="Delete Chat"
-        >
-          ×
-        </button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              className="absolute right-2 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-opacity px-1 cursor-pointer"
+            >
+              ×
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="right">
+            <p>Delete Chat</p>
+          </TooltipContent>
+        </Tooltip>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
