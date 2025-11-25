@@ -19,13 +19,11 @@ import { cn } from "@/lib/utils";
 export function ThemeSettingsPanel() {
   const {
     currentTheme,
-    availableThemes,
+    themesForCurrentMode,
     setTheme,
     themeMode,
     setThemeMode,
     isMounted,
-    resolvedTheme,
-    isDark,
   } = useTheme();
 
   if (!isMounted) {
@@ -89,20 +87,7 @@ export function ThemeSettingsPanel() {
             return (
               <button
                 key={mode.id}
-                onClick={() => {
-                  console.log(resolvedTheme, currentTheme.id);
-                  console.log(currentTheme.type);
-                  console.log(mode.id);
-                  if (resolvedTheme !== currentTheme.id) {
-                    const fallback = availableThemes.find(
-                      (t) => t.type === currentTheme.type
-                    );
-                    if (fallback) {
-                      setTheme(fallback.id);
-                    }
-                  }
-                  setThemeMode(mode.id);
-                }}
+                onClick={() => setThemeMode(mode.id)}
                 className={cn(
                   "relative p-4 rounded-lg border-2 text-left transition-all",
                   "hover:border-primary/50 hover:shadow-sm",
@@ -153,7 +138,7 @@ export function ThemeSettingsPanel() {
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
-          {availableThemes.map((theme) => {
+          {themesForCurrentMode.map((theme) => {
             const isActive = currentTheme.id === theme.id;
 
             return (
