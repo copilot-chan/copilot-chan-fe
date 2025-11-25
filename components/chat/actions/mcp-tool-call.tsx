@@ -1,79 +1,129 @@
 "use client";
 
 import * as React from "react";
+import { cn } from "@/lib/utils";
+import {
+  ChevronDown,
+  ChevronRight,
+  CheckCircle2,
+  Loader2,
+  Terminal,
+  AlertCircle,
+} from "lucide-react";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/Collapsible";
+import { Button } from "@/components/ui/button";
 
 interface ToolCallProps {
-  status: "complete" | "inProgress" | "executing";
+  status: "complete" | "inProgress" | "executing" | "error";
   name?: string;
   args?: any;
   result?: any;
+  className?: string;
 }
 
 export default function MCPToolCall({
   status,
-  name = "",
+  name = "Tool Call",
   args,
   result,
+  className,
 }: ToolCallProps) {
   const [isOpen, setIsOpen] = React.useState(false);
+  const isComplete = status === "complete";
+  const isError = status === "error";
+  const isLoading = status === "inProgress" || status === "executing";
 
   // Format content for display
   const format = (content: any): string => {
-    if (!content) return "";
-    const text =
-      typeof content === "object"
-        ? JSON.stringify(content, null, 2)
-        : String(content);
-    return text
-      .replace(/\\n/g, "\n")
-      .replace(/\\t/g, "\t")
-      .replace(/\\"/g, '"')
-      .replace(/\\\\/g, "\\");
+    if (content === undefined || content === null) return "";
+    try {
+      const text =
+        typeof content === "object"
+          ? JSON.stringify(content, null, 2)
+          : String(content);
+      return text;
+    } catch (e) {
+      return String(content);
+    }
   };
 
   return (
-    <div className="bg-[#1e2738] rounded-lg overflow-hidden w-full">
-      <div
-        className="p-3 flex items-center cursor-pointer"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <span className="text-white text-sm overflow-hidden text-ellipsis">
-          {name || "MCP Tool Call"}
-        </span>
-        <div className="ml-auto">
-          <div
-            className={`w-2 h-2 rounded-full ${
-              status === "complete"
-                ? "bg-gray-300"
-                : status === "inProgress" || status === "executing"
-                ? "bg-gray-500 animate-pulse"
-                : "bg-gray-700"
-            }`}
-          />
+    <Collapsible
+      className={cn("bg-card text-card-foreground ", className)}
+      open={isOpen}
+      onOpenChange={setIsOpen}
+    >
+      {/* header */}
+      <div className={cn("flex gap-3 p-3 select-none transition-colors")}>
+        {/* Status Icon */}
+        <div className="flex-shrink-0">
+          {isComplete && <CheckCircle2 className="w-5 h-5 text-green-500" />}
+          {isError && <AlertCircle className="w-5 h-5 text-destructive" />}
+          {isLoading && (
+            <Loader2 className="w-5 h-5 text-primary animate-spin" />
+          )}
         </div>
+
+        {/* trigger */}
+        <CollapsibleTrigger asChild>
+          <Button variant="link">
+            {/* Title */}
+            <div className=" min-w-0 flex items-center gap-2 overflow-hidden">
+              <span className="font-medium text-sm truncate">{name}</span>
+            </div>
+
+            {isOpen ? (
+              <ChevronDown className="w-4 h-4" />
+            ) : (
+              <ChevronRight className="w-4 h-4" />
+            )}
+          </Button>
+        </CollapsibleTrigger>
       </div>
 
-      {isOpen && (
-        <div className="px-4 pb-4 text-gray-300 font-mono text-xs">
+      {/* content */}
+      <CollapsibleContent>
+        <div className="p-4 pt-0 space-y-4 border-t bg-muted/10">
+          {/* Arguments Section */}
           {args && (
-            <div className="mb-4">
-              <div className="text-gray-400 mb-2">Parameters:</div>
-              <pre className="whitespace-pre-wrap max-h-[200px] overflow-auto">
-                {format(args)}
-              </pre>
+            <div className="mt-4">
+              <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                Input Parameters
+              </div>
+              <div className="relative rounded-md border bg-muted/50 p-3 font-mono text-xs">
+                <pre className="whitespace-pre-wrap break-words overflow-auto max-h-[200px] text-foreground/90">
+                  {format(args)}
+                </pre>
+              </div>
             </div>
           )}
 
-          {status === "complete" && result && (
+          {/* Result Section */}
+          {result && (
             <div>
-              <div className="text-gray-400 mb-2">Result:</div>
-              <pre className="whitespace-pre-wrap max-h-[200px] overflow-auto">
-                {format(result)}
-              </pre>
+              <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider my-2">
+                Result
+              </div>
+              <div className="relative rounded-md border bg-muted/50 p-3 font-mono text-xs">
+                <pre className="whitespace-pre-wrap break-words overflow-auto max-h-[300px] text-foreground/90">
+                  {format(result)}
+                </pre>
+              </div>
+            </div>
+          )}
+
+          {/* Empty State */}
+          {!args && !result && (
+            <div className="py-2 text-center text-sm text-muted-foreground italic">
+              No details available
             </div>
           )}
         </div>
-      )}
-    </div>
+      </CollapsibleContent>
+    </Collapsible>
   );
 }
