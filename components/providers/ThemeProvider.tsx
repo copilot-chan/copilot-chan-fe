@@ -295,6 +295,7 @@ export function ThemeProvider({
         // Update existing theme
         const updated = [...prev];
         updated[existingIndex] = theme;
+        setLocalStorage(CUSTOM_THEMES_STORAGE_KEY, JSON.stringify(updated));
         return updated;
       }
 
