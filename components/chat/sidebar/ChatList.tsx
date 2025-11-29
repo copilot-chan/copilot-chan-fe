@@ -6,9 +6,13 @@ import { ChatItem } from "./ChatItem";
 import { Chat } from "@/types/api";
 import { fetcher } from "@/lib/api";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { useChatSession } from "@/components/providers/ChatSessionProvider";
+import { useRouter } from "next/navigation";
 
 export function ChatList() {
   const { user, token } = useAuth();
+  const router = useRouter();
+  const { generateNewSession } = useChatSession();
 
   const { data: sessions } = useSWR<Chat[]>(
     user && token ? [`/api/chats?userId=${user.uid}`, token] : null,
@@ -47,7 +51,8 @@ export function ChatList() {
 
     // If we deleted the current chat, redirect to new chat
     if (window.location.pathname === `/chat/${id}`) {
-      window.location.href = "/";
+      generateNewSession();
+      router.push("/");
     }
   };
 
