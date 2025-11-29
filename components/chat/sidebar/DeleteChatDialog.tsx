@@ -51,6 +51,7 @@ export function DeleteChatDialog({ chatId, onDelete }: DeleteChatDialogProps) {
             <Button
               variant="ghost"
               className="absolute right-2 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-opacity px-1 cursor-pointer"
+              onClick={() => setOpen(true)}
             >
               ×
             </Button>

@@ -15,7 +15,6 @@ const NewChatButton = ({ onClick }: { onClick: () => void }) => (
         onClick={onClick}
         variant="ghost"
         className="hover:bg-sidebar-accent text-sidebar-foreground hover:text-sidebar-accent-foreground transition-colors"
-        aria-label="New chat"
       >
         <Plus className="w-5 h-5" />
       </Button>
@@ -45,7 +44,7 @@ export const SidebarHeader = ({
   >
     {/* Logo */}
     {!isCollapsed && (
-      <Label className="text-sidebar-accent-foreground text-lg">
+      <Label className="text-sidebar-accent-foreground text-lg mr-4">
         Copilot-Chan
       </Label>
     )}
